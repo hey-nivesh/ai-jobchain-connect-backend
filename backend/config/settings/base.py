@@ -14,7 +14,12 @@ SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'ai-jobchain-connect-backend.onrender.com',
+    '.onrender.com',
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -124,14 +129,38 @@ REST_FRAMEWORK = {
 }
 
 # CORS settings
+
+# CORS Configuration
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    "https://ai-jobchain-connect-five.vercel.app",  # Vercel frontend
+    "http://localhost:5173",  # Local Vite
     "http://127.0.0.1:5173",
-    "http://localhost:3000",
+    "http://localhost:3000",  # Local Next.js
     "http://127.0.0.1:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# Allow common headers for authentication
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# CSRF trusted origins for cross-site POSTs
+CSRF_TRUSTED_ORIGINS = [
+    'https://ai-jobchain-connect-five.vercel.app',
+    'https://ai-jobchain-connect-backend.onrender.com',
+]
+
+
 
 # File upload settings
 FILE_UPLOAD_HANDLERS = [
