@@ -13,8 +13,24 @@ def initialize_firebase():
     try:
         # Check if Firebase is already initialized
         if not firebase_admin._apps:
-            # Get the path to the service account file - it's in the backend root directory
-            # Go up from backend/utils/ to backend/ root where the service account file is located
+            # First try to get from environment variable (base64 encoded)
+            firebase_json_b64 = os.environ.get('FIREBASE_SERVICE_ACCOUNT_JSON')
+            
+            if firebase_json_b64:
+                # Decode base64 and parse JSON
+                import base64
+                import json
+                try:
+                    firebase_json = base64.b64decode(firebase_json_b64).decode('utf-8')
+                    firebase_creds = json.loads(firebase_json)
+                    cred = credentials.Certificate(firebase_creds)
+                    firebase_admin.initialize_app(cred)
+                    print("Firebase initialized with environment variable credentials")
+                    return
+                except Exception as e:
+                    print(f"Error decoding Firebase credentials: {e}")
+            
+            # Fallback to file-based approach
             current_dir = Path(__file__).resolve().parent  # backend/utils/
             backend_root = current_dir.parent.parent  # backend/ (go up 2 levels)
             service_account_path = backend_root / 'firebase-service-account.json'
@@ -22,7 +38,7 @@ def initialize_firebase():
             if service_account_path.exists():
                 cred = credentials.Certificate(str(service_account_path))
                 firebase_admin.initialize_app(cred)
-                print(f"Firebase initialized with service account: {service_account_path}")
+                print(f"Firebase initialized with service account file: {service_account_path}")
             else:
                 # For development, you can use environment variables
                 # or create a minimal service account
